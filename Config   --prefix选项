@@ -1,0 +1,25 @@
+在linux和unix环境中，源码安装是最常用的软件安装方式，一些软件除了提供源码外，也提供各种发行版的二进制安装包（如基于redhat包管理工具的rpm包），但强烈建议使用源码安装方式。原因是：（1）没有类似rpm那样让人恼火的包依赖关系，（2）源码安装灵活自由，适用于不同的平台，维护也十分方便。
+
+源码的安装一般由3个步骤组成：配置（configure）、编译（make）、安装（make install），具体的安装方法一般作者都会给出文档，这里主要讨论配置（configure）。Configure是一个可执行脚本，它有很多选项，使用命令./configure –help输出详细的选项列表，如下：
+
+   -bash-3.00# ./configure --help
+Usage: configure [options] [host]
+Options: [defaults in brackets after descriptions]
+Configuration:
+--cache-file=FILE       cache test results in FILE
+--help                  print this message
+--no-create             do not create output files
+--quiet, --silent       do not print `checking...' messages
+--version               print the version of autoconf that created configure
+Directory and file names:
+--prefix=PREFIX         install architecture-independent files in PREFIX
+[/usr/local]
+--exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+[same as prefix]
+--bindir=DIR            user executables in DIR [EPREFIX/bin]
+……….(省略若干)
+很多的选项，个人认为，你可以忽略其他的一切，但请把—prefix加上。这里以安装supersparrow-0.0.0为例，我们打算把它安装到目录 /usr/local/supersparrow,于是在supersparrow-0.0.0目录执行带选项的脚本./configure –prefix=/usr/local/supersparrow,执行成功后再编译、安装（make，make install）；安装完成将自动生成目录supersparrow,而且该软件所有的文件都被复制到这个目录。为什么要指定这个安装目录？是为了以后的维护方便，如果没有用这个选项，安装过程结束后，该软件所需的软件被复制到不同的系统目录下，很难弄清楚到底复制了那些文件、都复制到哪里去了—基本上是一塌糊涂。
+
+用了—prefix选项的另一个好处是卸载软件或移植软件。当某个安装的软件不再需要时，只须简单的删除该安装目录，就可以把软件卸载得干干净净；移植软件只需拷贝整个目录到另外一个机器即可（相同的操作系统）。
+
+一个小选项有这么方便的作用，建议在实际工作中多多使用。
