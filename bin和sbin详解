@@ -1,0 +1,23 @@
+/  : this is root directory
+/bin : commands in this dir are all system installed user commands
+/sbin:  commands in this dir are all system installed super user commands
+/usr/bin: user commands for applications
+/usr/sbin: super user commands for applications
+/usr/X11R6/bin : X application user commands
+/usr/X11R6/sbin: X application super user commands
+
+normally you can't execute super user command like visudoer, /usr/local/sbin/apachectr,  etc when you using a user login.
+
+
+bin: 
+
+bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等。 
+
+/usr/bin: 
+主要放置一些应用软体工具的必备执行档例如c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome*、 gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb*、wget等。 
+  
+/sbin: 
+主要放置一些系统管理的必备程式例如:cfdisk、dhcpcd、dump、e2fsck、fdisk、halt、ifconfig、ifup、 ifdown、init、insmod、lilo、lsmod、mke2fs、modprobe、quotacheck、reboot、rmmod、 runlevel、shutdown等。 
+  
+/usr/sbin: 
+放置一些网路管理的必备程式例如:dhcpd、httpd、imap、in.*d、inetd、lpd、named、netconfig、nmbd、samba、sendmail、squid、swap、tcpd、tcpdump等
