@@ -1,0 +1,19 @@
+参考：DESTDIR and PREFIX of make，http://stackoverflow.com/questions/11307465/destdir-and-prefix-of-make
+
+./configure --prefix=*
+
+determines where the package will go when it is installed, and where it will look for its associated files when it is run. It's what you should use if you're just compiling something for use on a single host.
+
+make install DESTDIR=*
+installing to a temporary directory which is not where the package will be run from. For example this is used when building deb packages. The person building the package doesn't actually install everything into its final place on his own system. He may have a different version installed already and not want to disturb it, or he may not even be root. So he uses configure --prefix=/usr so the program will expect to be installed in /usr when it runs, then make install DESTDIR=debian/tmp to actually create the directory structure.
+
+make install prefix=/foo/bar/baz
+That's going to install it to a different place but not create all the directories as DESTDIR=/foo/bar/baz would. 
+
+It's commonly used with GNU stow via:
+
+ ./configure --prefix=/usr/local && make && sudo make install prefix=/usr/local/stow/foo, 
+
+which would install binaries in /usr/local/stow/foo/bin.
+
+make install DESTDIR=/usr/local/stow/foo, by comparison, would install binaries in /usr/local/stow/foo/usr/local/bin
