@@ -1,0 +1,83 @@
+apt-get remove 与 apt-get autoremove、aptitude remove的不同
+
+apt-get remove的行为我们很好理解，就是删除某个包的同时，删除依赖于它的包
+例如： A 依赖于 B, B 依赖于 C
+apt-get remove 删除B的同时，将删除A(很好理解，A依赖于B，B被删了，A也就无法正常运行了)
+
+先说明下apt-get autoremove与aptitude remove是一样的效果的, 我们先了解下这两者的瓜葛
+
+apt-get一开始并没有记录auto-install的信息，在apt(0.6.44.2exp1)此版本时(06年)，apt-get增加了类似于aptitude的auto-install记录(/var/lib/apt/extended_states)。此后，aptitude在版本0.4.5.1(07年)转向使用apt-get的auto-install记录，而抛弃了自己原先的记录方式，再随后apt-get在版本0.7.7(07年)增加了autoremove的选项。
+
+依赖关系是一个复杂而交错的链条，我们把举几个例子来看看它们的行为
+
+1
+2
+3
+以下图中， 绿色圆是为了满足依赖关系而apt-get或aptitude自动安装上的包
+蓝色圆是管理员使用apt-get install 或 aptitude install
+指定安装的包，简称为手动安装的包
+例子1:
+1. C 依赖于或推荐B软件包(apt-get和aptitude在安装软件时除了安装必要的依赖包，默认也会安装Recommends关系的包)
+2. B 依赖于或推荐A, A被其他手动安装的包依赖
+
+
+1
+2
+3
+apt-get remove C         将删除C, 同时提示你用apt-get autoremove去清除B
+apt-get autoremove C     将删除B, C
+aptitude remove C        将删除B, C
+我的理解: 删除C, 那么B这个包既是自动安装的,且没有其他手动安装的包依赖于它,
+则可以判定B也是没必要的
+
+例子2:
+1. 在例子1的基础上, D 依赖于或者推荐B, 且D没有被其他手动安装的包依赖
+这样的情况一般出现在用apt-get remove 某个手动安装的包之后.
+
+
+
+apt-get remove C 将删除C, 同时提示你用apt-get autoremove去清除B,D apt-get autoremove C 将删除B, C, D aptitude remove C 将删除B, C, D
+我的理解: 删除C, 那么B,D 这两个包既是自动安装的,且没有其他手动安装的包依赖于它们,
+则可以判定B,D也是没必要的
+
+例子3:
+1. 在例子2的基础上, 有个手动安装的包E推荐D(既E Recommends D,手动安装E时,也会把D装上)
+
+
+
+1
+2
+3
+apt-get remove C         将删除C, 同时提示你用apt-get autoremove去清除B,D
+apt-get autoremove C     将删除B, C, D
+aptitude remove C        将删除B, C, D
+我的理解: 删除C, 那么B,D 这两个包既是自动安装的,且没有其他手动安装的包依赖于它们,
+则可以判定B,D也是没必要的
+虽然D被E Recommend, 但为啥是这么设计的, 我也没猜出开发人员的想法
+
+例子4:
+1. 在例子3的基础上, D变成依赖于B, E变成依赖于D
+
+
+
+1
+2
+3
+apt-get remove C         将删除C
+apt-get autoremove C     将删除C
+aptitude remove C        将删除C
+我的理解: 只删除C, 因为B被D依赖, D被E依赖, 间接来说,E不能没有B,D而正常运行,所以B,D被保留
+
+例子5:
+1. 在例子4的基础上, D变成推荐B, E依然依赖于D
+
+
+
+1
+2
+3
+apt-get remove C         将删除C, 同时提示你用apt-get autoremove去清除B
+apt-get autoremove C     将删除B, C
+aptitude remove C        将删除B, C
+我的理解: 删除C, 而B没有被其他手动安装的包直接依赖或者间接依赖(我指那些一层层depend on的关系), D被E依赖
+所以B不是必要的,可以删除, 而D不能删除
